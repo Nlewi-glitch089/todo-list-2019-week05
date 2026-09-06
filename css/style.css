@@ -1,0 +1,630 @@
+/* ================= Basic setup ================= */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #f2f1fb;
+  background: #14122b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ================= Animated background ================= */
+.bg-blobs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 85%, rgba(255,255,255,0.03) 0, transparent 45%),
+    linear-gradient(160deg, #171531 0%, #14122b 45%, #0f0d22 100%);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: drift 22s ease-in-out infinite;
+}
+
+.blob-a {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -100px;
+  background: #7c5cff;
+  animation-duration: 26s;
+}
+
+.blob-b {
+  width: 380px;
+  height: 380px;
+  bottom: -140px;
+  right: -80px;
+  background: #ff6ec7;
+  animation-duration: 30s;
+  animation-delay: -6s;
+}
+
+.blob-c {
+  width: 320px;
+  height: 320px;
+  top: 40%;
+  right: 10%;
+  background: #34e0a1;
+  opacity: 0.35;
+  animation-duration: 24s;
+  animation-delay: -12s;
+}
+
+.blob-d {
+  width: 260px;
+  height: 260px;
+  bottom: 10%;
+  left: 8%;
+  background: #ffd166;
+  opacity: 0.25;
+  animation-duration: 20s;
+  animation-delay: -3s;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -25px) scale(1.08); }
+  66%      { transform: translate(-25px, 20px) scale(0.95); }
+}
+
+/* subtle dot texture over everything */
+.bg-dots {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* ================= Layout shell ================= */
+.app-shell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 460px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  padding: 0 4px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7c5cff, #34e0a1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgba(124, 92, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: 0.3px;
+  background: linear-gradient(90deg, #ffffff, #cfc9ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tagline {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: #a7a3d1;
+}
+
+.mood {
+  font-size: 30px;
+  transition: transform 0.3s ease;
+}
+
+.mood.bump {
+  animation: moodBump 0.4s ease;
+}
+
+@keyframes moodBump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3) rotate(-6deg); }
+  100% { transform: scale(1); }
+}
+
+/* ================= Card with glowing gradient border ================= */
+/* I used a wrapper with a conic-gradient ::before so I can fade the
+   rainbow border in/out for the celebration without touching the card itself */
+.card-wrapper {
+  position: relative;
+  border-radius: 28px;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.card-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #ff6ec7, #ffd166, #34e0a1, #7c5cff, #ff6ec7);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.card-wrapper.celebrating::before {
+  opacity: 1;
+  animation: spinGradient 3.5s linear infinite;
+}
+
+.card-wrapper.celebrating {
+  animation: wrapperPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes spinGradient {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes wrapperPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.012); }
+}
+
+.card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(30, 27, 58, 0.92), rgba(20, 18, 43, 0.94));
+  backdrop-filter: blur(16px);
+  border-radius: 26px;
+  padding: 26px 26px 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* ================= Progress section ================= */
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.progress-ring {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 6;
+}
+
+/* stroke-dasharray/offset here match the ring's circumference (2 * PI * 26)
+   so I can animate the ring by changing stroke-dashoffset in my JS */
+.ring-fill {
+  fill: none;
+  stroke: url(#ringGradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 163.36;
+  stroke-dashoffset: 163.36;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-info {
+  flex: 1;
+}
+
+.progress-percent {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.progress-text {
+  font-size: 12.5px;
+  color: #a7a3d1;
+  margin-top: 2px;
+}
+
+/* ================= Input row ================= */
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+#taskInput {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2f1fb;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+#taskInput::placeholder {
+  color: #8a86bb;
+}
+
+#taskInput:focus {
+  border-color: #7c5cff;
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.18);
+}
+
+#addBtn {
+  padding: 13px 20px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7c5cff, #9d7bff);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+#addBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(124, 92, 255, 0.45);
+  filter: brightness(1.08);
+}
+
+#addBtn:active {
+  transform: translateY(0);
+}
+
+/* ================= Task list ================= */
+#taskList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #75719f;
+}
+
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.task-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  transition: background 0.25s ease, transform 0.2s ease, opacity 0.25s ease, border-color 0.25s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.task-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* I add this class right before deleting a task in my JS so it
+   fades/slides out instead of just disappearing */
+.task-item.removing {
+  opacity: 0;
+  transform: translateX(30px) scale(0.94);
+}
+
+.task-item.completed {
+  background: rgba(52, 224, 161, 0.07);
+  border-color: rgba(52, 224, 161, 0.22);
+}
+
+.task-item.just-completed {
+  animation: taskCompleteFlash 0.5s ease;
+}
+
+@keyframes taskCompleteFlash {
+  0%   { background: rgba(52, 224, 161, 0.3); }
+  100% { background: rgba(52, 224, 161, 0.07); }
+}
+
+/* Custom checkbox circle */
+.check-circle {
+  position: relative;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #6f6a9e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  background: transparent;
+}
+
+.check-circle:hover {
+  transform: scale(1.1);
+  border-color: #9d7bff;
+}
+
+.task-item.completed .check-circle {
+  background: linear-gradient(135deg, #34e0a1, #22b98a);
+  border-color: #34e0a1;
+}
+
+.check-circle svg {
+  width: 14px;
+  height: 14px;
+  stroke: white;
+  stroke-width: 3;
+  fill: none;
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  transition: stroke-dashoffset 0.25s ease 0.05s;
+}
+
+.task-item.completed .check-circle svg {
+  stroke-dashoffset: 0;
+}
+
+.ripple-ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 50%;
+  background: #34e0a1;
+  opacity: 0.55;
+  pointer-events: none;
+  animation: ripple 0.55s ease-out forwards;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.task-text {
+  flex: 1;
+  font-size: 14.5px;
+  word-break: break-word;
+  transition: color 0.25s ease;
+}
+
+.task-item.completed .task-text {
+  color: #8f8bc4;
+  text-decoration: line-through;
+  text-decoration-color: #34e0a1;
+}
+
+.delete-btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: #8a86bb;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 107, 129, 0.16);
+  color: #ff6b81;
+  transform: scale(1.08);
+}
+
+.empty-state {
+  text-align: center;
+  font-size: 13px;
+  color: #75719f;
+  padding: 26px 10px 6px;
+}
+
+/* ================= Decorative sparkles ================= */
+.sparkle {
+  position: fixed;
+  z-index: 1;
+  font-size: 18px;
+  opacity: 0.35;
+  animation: twinkleFloat 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes twinkleFloat {
+  0%, 100% { opacity: 0.15; transform: translateY(0) scale(1); }
+  50%      { opacity: 0.5; transform: translateY(-10px) scale(1.15); }
+}
+
+/* ================= Celebration overlay ================= */
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 8, 24, 0.55);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+}
+
+.celebration-overlay.show {
+  display: flex;
+  animation: overlayFade 0.35s ease;
+}
+
+@keyframes overlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.celebration-modal {
+  position: relative;
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+  padding: 34px 28px 28px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, #241f4a, #1a1638);
+  border: 1px solid rgba(255, 214, 102, 0.35);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 214, 102, 0.15);
+  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+  0%   { transform: scale(0.75); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.trophy {
+  font-size: 54px;
+  margin-bottom: 8px;
+  animation: trophyBob 1.6s ease-in-out infinite;
+}
+
+@keyframes trophyBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-8px) rotate(-4deg); }
+}
+
+.celebration-modal h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  background: linear-gradient(90deg, #ffd166, #ff9ecb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.celebration-modal p {
+  margin: 0 0 22px;
+  font-size: 13.5px;
+  color: #c7c3e8;
+}
+
+#dismissCelebration {
+  padding: 12px 26px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffd166, #ff9ecb);
+  color: #221a3a;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#dismissCelebration:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(255, 209, 102, 0.35);
+}
+
+/* expanding rings behind the modal */
+.burst-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 2px solid rgba(255, 214, 102, 0.6);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: ringExpand 1.4s ease-out forwards;
+}
+
+@keyframes ringExpand {
+  0%   { transform: scale(0.4); opacity: 0.8; }
+  100% { transform: scale(7); opacity: 0; }
+}
+
+/* ================= Confetti ================= */
+#confettiLayer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 70;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  animation-name: confettiFall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confettiFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(540deg); opacity: 0.9; }
+}
